@@ -46,6 +46,9 @@ pub use sp_runtime::{Perbill, Permill};
 /// Import the template pallet.
 pub use pallet_template;
 
+/// Inport the demoquad pallet.
+pub use pallet_demoquad;
+
 /// An index to a block.
 pub type BlockNumber = u32;
 
@@ -267,6 +270,16 @@ impl pallet_template::Config for Runtime {
 	type Event = Event;
 }
 
+/// Configure the pallet-demoquad in pallets/demoquad
+impl pallet_demoquad::Config for Runtime {
+	type Event = Event;
+	type MinLength = ConstU32<20>;
+	type MaxLength = ConstU32<1000>;
+	type Duration = ConstU32<10>;
+	type MaxVotes = ConstU32<1000>;
+	type MaxProposalsPerBlock = ConstU32<3>;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -284,6 +297,7 @@ construct_runtime!(
 		Sudo: pallet_sudo,
 		// Include the custom logic from the pallet-template in the runtime.
 		TemplateModule: pallet_template,
+		DemoquadModule: pallet_demoquad,
 	}
 );
 
@@ -329,6 +343,7 @@ mod benches {
 		[pallet_balances, Balances]
 		[pallet_timestamp, Timestamp]
 		[pallet_template, TemplateModule]
+		[pallet_demoquad, DemoquadModule]
 	);
 }
 
