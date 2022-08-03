@@ -1,13 +1,16 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+use frame_support::traits::{Currency, ReservableCurrency};
 use frame_support::{
 	pallet_prelude::{ValueQuery, *},
 	Twox64Concat,
 };
 use frame_system::pallet_prelude::*;
+use identity_primitives::Identifiable;
 pub use pallet::*;
 use sp_runtime::ArithmeticError;
 use sp_std::vec::Vec;
+
 /*
 #[cfg(test)]
 mod mock;
@@ -18,6 +21,11 @@ mod tests;
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
 */
+//type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
+//type BalanceOf<T> = <<T as Config>::Currency as Currency<AccountIdOf<T>>>::Balance;
+
+type BalanceOf<T> = <<T as Config>::Currency as Currency<AccountIdOf<T>>>::Balance;
+type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -47,6 +55,11 @@ pub mod pallet {
 
 		/// Max proposals submisations per block;
 		type MaxProposalsPerBlock: Get<u32>;
+
+		/// The currency trait.
+		type Currency: ReservableCurrency<Self::AccountId>;
+
+		type Identity: Identifiable<Self::AccountId, (Self::Hash, BalanceOf<Self>)>;
 	}
 
 	#[pallet::pallet]
@@ -106,9 +119,11 @@ pub mod pallet {
 
 	#[pallet::error]
 	pub enum Error<T> {
+		NoIdentityFound,
 		ProposalTooLong,
 		ProposalTooShort,
 		ProposalNotExists,
+		ProposalExpired,
 		ProposalAlreadyExists,
 		TooManyProposalsInBloc,
 		AlreadyVoted,
@@ -141,7 +156,7 @@ pub mod pallet {
 		pub fn submit_proposal(origin: OriginFor<T>, text: Vec<u8>) -> DispatchResult {
 			let who = ensure_signed(origin)?;
 
-			// TODO: should ensure identified.
+			ensure!(T::Identity::is_identified(&who), Error::<T>::NoIdentityFound);
 
 			// Check proposal length
 			let bounded_text: BoundedVec<_, _> =
@@ -150,8 +165,6 @@ pub mod pallet {
 				bounded_text.len() >= T::MinLength::get() as usize,
 				Error::<T>::ProposalTooShort
 			);
-
-			// TODO: check for duplicated proposal
 
 			// Calculate end of proposal lifetime
 			let current_block_number = <frame_system::Pallet<T>>::block_number();
@@ -188,11 +201,11 @@ pub mod pallet {
 		) -> DispatchResult {
 			let who = ensure_signed(origin)?;
 
-			// Question: Does it take it or it is cloned or mut ref works?
+			ensure!(T::Identity::is_identified(&who), Error::<T>::NoIdentityFound);
+
 			let mut proposal = &mut <Proposals<T>>::try_get(proposal_id)
 				.map_err(|_| Error::<T>::ProposalNotExists)?;
 
-			// Question: Should use reference for who?
 			if <DidVote<T>>::get(proposal_id, who.clone()) {
 				return Err(Error::<T>::AlreadyVoted.into());
 			} else {

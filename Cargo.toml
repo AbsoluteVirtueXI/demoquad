@@ -3,6 +3,9 @@ members = [
     "node",
     "pallets/template",
 	"pallets/demoquad",
+	"pallets/identity-primitives",
+	"pallets/simple-identity",
+	"pallets/identity-primitives",
     "runtime",
 ]
 [profile.release]

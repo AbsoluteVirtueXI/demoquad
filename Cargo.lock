@@ -2271,6 +2271,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "identity-primitives"
+version = "0.1.0"
+
+[[package]]
 name = "idna"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3777,6 +3781,7 @@ dependencies = [
  "pallet-demoquad",
  "pallet-grandpa",
  "pallet-randomness-collective-flip",
+ "pallet-simple-identity",
  "pallet-sudo",
  "pallet-template",
  "pallet-timestamp",
@@ -4016,6 +4021,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
+ "identity-primitives",
  "parity-scale-codec",
  "scale-info",
  "sp-core",
@@ -4080,6 +4086,23 @@ dependencies = [
  "sp-staking",
  "sp-std",
  "sp-trie",
+]
+
+[[package]]
+name = "pallet-simple-identity"
+version = "0.1.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "identity-primitives",
+ "pallet-balances",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
 ]
 
 [[package]]

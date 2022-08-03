@@ -49,6 +49,9 @@ pub use pallet_template;
 /// Inport the demoquad pallet.
 pub use pallet_demoquad;
 
+/// Import the simple identity pallet.
+pub use pallet_simple_identity;
+
 /// An index to a block.
 pub type BlockNumber = u32;
 
@@ -278,6 +281,17 @@ impl pallet_demoquad::Config for Runtime {
 	type Duration = ConstU32<10>;
 	type MaxVotes = ConstU32<1000>;
 	type MaxProposalsPerBlock = ConstU32<3>;
+	type Currency = Balances;
+	type Identity = Identity;
+}
+
+/// Configure the pallet-simple-identity in pallets/simple-identity
+impl pallet_simple_identity::Config for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+	type ReservationFee = ConstU128<100>;
+	type Slashed = ();
+	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -298,6 +312,7 @@ construct_runtime!(
 		// Include the custom logic from the pallet-template in the runtime.
 		TemplateModule: pallet_template,
 		DemoquadModule: pallet_demoquad,
+		Identity: pallet_simple_identity,
 	}
 );
 
@@ -344,6 +359,7 @@ mod benches {
 		[pallet_timestamp, Timestamp]
 		[pallet_template, TemplateModule]
 		[pallet_demoquad, DemoquadModule]
+		[pallet_simple_identity, Identity]
 	);
 }
 
