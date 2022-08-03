@@ -4,7 +4,7 @@ pba final exam
 
 ## Description
 
-Identified accounts can propose proposals and vote on them with a basic `Yes` or `No` choice.
+Identified accounts can submit proposals and vote on them with a basic `Yes` or `No` choice.
 The proposals can be voted during a certain number of blocks.
 Only 3 proposals can be proposed per blocks.
 The identification is managed in `pallet-simple-identity`.
@@ -66,6 +66,21 @@ impl<T: Config> Identifiable<T::AccountId, (T::Hash, BalanceOf<T>)> for Pallet<T
 ## voting system: pallet-demoquad
 
 Identified accounts can submit proposals and vote on them.
+A proposal:
+
+```rust
+#[derive(Clone, Encode, Decode, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
+#[scale_info(skip_type_params(T))]
+pub struct Proposal<T: Config> {
+	pub proposer: T::AccountId,
+	pub proposal: BoundedVec<u8, T::MaxLength>,
+	pub nb_yes: u32,
+	pub nb_no: u32,
+	pub start: T::BlockNumber,
+	pub end: T::BlockNumber,
+}
+```
+
 User can vote on proposal during a maximum number of block: `Duration`.
 A BoundedVector of maximum `MaxProposalsPerBlock` stores each proposal ids that will end in a particular block.
 With the `StorageMap` bellow we can find for each block which Proposal ended or are still running.
@@ -112,9 +127,10 @@ The pallet is just partially tested not all cases are covered.
 - Even if i start to be comfortable my macro's in Substrate, sometimes i had to think twice before writting.
 - I had a lot of name colision while writting my tests. The namespace was polluted and names/types were ambigious
 - i mostly did it following my personnal view and feeling, i got some inspiration from pallets, but not sure what would be the best practice for this kind of exercice.
+- found some dirty hacks for testing event, but doesn't work so well.
 
 ## Conclusion
 
-the project is really interesting, because it deals with a topical subject: people's desire for more transparency and greater involvement in decision-making.
+the project is really interesting, because it deals with a topical subjects: people's desire for more transparency and greater involvement in decision-making.
 I regret not having finished, i started late and i changed my project on Monday 4am because i had trouble working with the pallet-assets and my Ethereum knowledge overlap too much on my substrate and both paragdim don't mix well sometimes.
 This project allowed me to be more comfortable with FRAME and to finally be able to understand the code in a lot of FRAME pallet.
