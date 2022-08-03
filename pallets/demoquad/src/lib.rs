@@ -35,8 +35,6 @@ pub mod pallet {
 	pub trait Config: frame_system::Config {
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
 
-		//type ProposalIndex: Parameter + AtLeast32BitUnsigned + Bounded + Default + Copy;
-
 		/// The minimum length of a proposal.
 		#[pallet::constant]
 		type MinLength: Get<u32>;
@@ -114,7 +112,6 @@ pub mod pallet {
 		ProposalEnded(u32),
 		WinProposal(u32),
 		LostProposal(u32),
-		//SomethingStored(u32, T::AccountId),
 	}
 
 	#[pallet::error]
@@ -133,7 +130,6 @@ pub mod pallet {
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
 		fn on_initialize(block_number: BlockNumberFor<T>) -> Weight {
-			// TODO: Should i write the win/loss in storage, field of the Proposal struct maybe
 			if let Ok(proposals) = <ProposalsPerBlock<T>>::try_get(block_number) {
 				for proposal_id in proposals {
 					let proposal = <Proposals<T>>::get(proposal_id).expect("it is chechk!!");
@@ -145,7 +141,6 @@ pub mod pallet {
 					Self::deposit_event(Event::ProposalEnded(proposal_id));
 				}
 			}
-			// TODO: should i remove the value instead?
 			0
 		}
 	}
@@ -213,8 +208,8 @@ pub mod pallet {
 			}
 
 			match choice {
-				Choice::Yes => proposal.nb_yes += 1, //TODO check_add here
-				Choice::No => proposal.nb_no += 1,   //TODO check_add here
+				Choice::Yes => proposal.nb_yes += 1, //TODO safe math add here
+				Choice::No => proposal.nb_no += 1,   //TODO safe math add here
 			}
 
 			Self::deposit_event(Event::VoteSubmited(proposal_id, who));
