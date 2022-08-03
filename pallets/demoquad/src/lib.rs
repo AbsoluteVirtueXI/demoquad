@@ -11,7 +11,6 @@ pub use pallet::*;
 use sp_runtime::ArithmeticError;
 use sp_std::vec::Vec;
 
-/*
 #[cfg(test)]
 mod mock;
 
@@ -20,7 +19,9 @@ mod tests;
 
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
-*/
+
+mod types;
+use types::*;
 
 type BalanceOf<T> = <<T as Config>::Currency as Currency<AccountIdOf<T>>>::Balance;
 type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
@@ -62,12 +63,6 @@ pub mod pallet {
 	#[pallet::generate_store(pub(super) trait Store)]
 	pub struct Pallet<T>(_);
 
-	#[derive(Encode, Decode, Debug, PartialEq, Eq, Clone, TypeInfo)]
-	pub enum Choice {
-		Yes,
-		No,
-	}
-
 	#[derive(Clone, Encode, Decode, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
 	#[scale_info(skip_type_params(T))]
 	pub struct Proposal<T: Config> {
@@ -80,7 +75,7 @@ pub mod pallet {
 	}
 
 	#[pallet::storage]
-	#[pallet::getter(fn nb_proposals)]
+	#[pallet::getter(fn next_proposals_id)]
 	pub type NextProposalId<T> = StorageValue<_, u32, ValueQuery>;
 
 	#[pallet::storage]
@@ -174,13 +169,18 @@ pub mod pallet {
 				end: end_block_number,
 			};
 
-			// Save proposal
-			let proposal_id = Self::get_next_proposal_id()?;
-			<Proposals<T>>::insert(proposal_id, proposal);
+			//let proposal_id = Self::get_next_proposal_id()?;
+
+			let proposal_id = <NextProposalId<T>>::get();
 
 			// Register proposal in on_initialize hook
 			<ProposalsPerBlock<T>>::try_append(end_block_number, proposal_id)
 				.map_err(|_| Error::<T>::TooManyProposalsInBloc)?;
+
+			<NextProposalId<T>>::put(proposal_id + 1);
+
+			// Store proposal
+			<Proposals<T>>::insert(proposal_id, proposal);
 
 			Self::deposit_event(Event::ProposalSubmited(proposal_id, who));
 			Ok(())
@@ -217,11 +217,12 @@ pub mod pallet {
 }
 
 impl<T: Config> Pallet<T> {
+	/*
 	fn get_next_proposal_id() -> Result<u32, DispatchError> {
 		NextProposalId::<T>::try_mutate(|next_id| -> Result<u32, DispatchError> {
 			let current_id = *next_id;
 			*next_id = next_id.checked_add(1).ok_or(ArithmeticError::Overflow)?;
 			Ok(current_id)
 		})
-	}
+	}*/
 }

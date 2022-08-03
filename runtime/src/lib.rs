@@ -311,7 +311,7 @@ construct_runtime!(
 		Sudo: pallet_sudo,
 		// Include the custom logic from the pallet-template in the runtime.
 		TemplateModule: pallet_template,
-		DemoquadModule: pallet_demoquad,
+		Demoquad: pallet_demoquad,
 		Identity: pallet_simple_identity,
 	}
 );
@@ -358,7 +358,7 @@ mod benches {
 		[pallet_balances, Balances]
 		[pallet_timestamp, Timestamp]
 		[pallet_template, TemplateModule]
-		[pallet_demoquad, DemoquadModule]
+		[pallet_demoquad, Demoquad]
 		[pallet_simple_identity, Identity]
 	);
 }

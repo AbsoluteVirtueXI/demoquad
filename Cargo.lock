@@ -4022,6 +4022,8 @@ dependencies = [
  "frame-support",
  "frame-system",
  "identity-primitives",
+ "pallet-balances",
+ "pallet-simple-identity",
  "parity-scale-codec",
  "scale-info",
  "sp-core",
