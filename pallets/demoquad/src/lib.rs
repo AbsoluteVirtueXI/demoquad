@@ -8,7 +8,6 @@ use frame_support::{
 use frame_system::pallet_prelude::*;
 use identity_primitives::Identifiable;
 pub use pallet::*;
-use sp_runtime::ArithmeticError;
 use sp_std::vec::Vec;
 
 #[cfg(test)]
@@ -117,7 +116,6 @@ pub mod pallet {
 		ProposalAlreadyExists,
 		TooManyProposalsInBloc,
 		AlreadyVoted,
-		Unknown,
 	}
 
 	#[pallet::hooks]
@@ -169,20 +167,22 @@ pub mod pallet {
 				end: end_block_number,
 			};
 
-			//let proposal_id = Self::get_next_proposal_id()?;
 
+			// Get proposal id
 			let proposal_id = <NextProposalId<T>>::get();
 
-			// Register proposal in on_initialize hook
+			// Register proposal in on_initialize hook to be trigger in end_block_number
 			<ProposalsPerBlock<T>>::try_append(end_block_number, proposal_id)
 				.map_err(|_| Error::<T>::TooManyProposalsInBloc)?;
 
+			// increment proposal id
 			<NextProposalId<T>>::put(proposal_id + 1);
 
 			// Store proposal
 			<Proposals<T>>::insert(proposal_id, proposal);
 
 			Self::deposit_event(Event::ProposalSubmited(proposal_id, who));
+
 			Ok(())
 		}
 
@@ -211,6 +211,7 @@ pub mod pallet {
 			}
 
 			Self::deposit_event(Event::VoteSubmited(proposal_id, who));
+
 			Ok(())
 		}
 	}

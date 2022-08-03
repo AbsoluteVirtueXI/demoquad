@@ -1,5 +1,5 @@
 #![allow(unused_must_use)]
-//use super::*;
+
 use crate::mock;
 use crate::types::Choice;
 use crate::{mock::*, Error};
@@ -10,8 +10,7 @@ fn hash(b: &[u8]) -> <Test as frame_system::Config>::Hash {
 	BlakeTwo256::hash(b)
 }
 
-use crate::Event as DemoQuadEvent;
-
+//use crate::Event as DemoQuadEvent;
 // found it here: https://stackoverflow.com/questions/60666012/getting-payload-from-a-substrate-event-back-in-rust-tests
 /*
 fn last_event() -> DemoQuadEvent<Test> {
@@ -86,11 +85,13 @@ fn should_increment_proposal_id() {
 	});
 }
 
+/*
 fn should_emit_event_on_proposal_submission() {
 	mock::Identity::set_hash(Origin::signed(1), hash(b"alice"));
 	DemoQuad::submit_proposal(Origin::signed(1), "vote for me 1?".encode());
 	//assert_eq!(last_event(), DemoQuadEvent::ProposalSubmited(0, 1));
 }
+*/
 
 #[test]
 fn only_identified_account_can_vote() {
@@ -118,15 +119,3 @@ fn can_only_vote_on_existensial_proposal() {
 		);
 	});
 }
-
-/*
-#[test]
-fn only_identified_account_can_vote() {
-	new_test_ext().execute_with(|| {
-		assert_eq!(1, 1);
-		//assert_eq!(Balances::total_balance(&2), 10);
-		//assert_ok!(SimpleIdentity::kill_hash(Origin::signed(1), 2));
-		//assert_eq!(Balances::total_balance(&2), 8);
-		//assert_eq!(<Identities<Test>>::get(2), None);
-	});
-}*/
