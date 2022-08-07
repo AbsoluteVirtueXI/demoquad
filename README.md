@@ -1,7 +1,5 @@
 # DemoQuad
 
-pba final exam
-
 ## Description
 
 Identified accounts can submit proposals and vote on them with a basic `Yes` or `No` choice.
@@ -132,5 +130,4 @@ The pallet is just partially tested not all cases are covered.
 ## Conclusion
 
 the project is really interesting, because it deals with a topical subjects: people's desire for more transparency and greater involvement in decision-making.
-I regret not having finished, i started late and i changed my project on Monday 4am because i had trouble working with the pallet-assets and my Ethereum knowledge overlap too much on my substrate and both paragdim don't mix well sometimes.
 This project allowed me to be more comfortable with FRAME and to finally be able to understand the code in a lot of FRAME pallet.
